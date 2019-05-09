@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- jquey do cdn do google -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- jquey moblie do cdn do google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+  
+    <!-- font Awesonme do brootstrap cdn -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/vermelho.css" />
+    <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+
+    <script>
+        var id = localStorage.getItem('codigo_usuario');
+
+        if(!id){ //se não estiver logado volta para o login
+            window.location.href = 'login.html'
+        }
+
+    </script>
+     <style>
+            
+            main {
+                background-color: black;
+                height: 100%;
+            }
+    
+            #principal, #conteudo {
+                background-color: white;
+            }
+    
+            #home{
+                background-color: black;
+                height: 100%;
+            }
+            #mypanel{
+                background-color: #222222;
+                
+            }
+    
+           
+ </style>
+</head>
+<body>
+    <div data-role="page" id="index">
+        <!-- cabeçalho -->
+       
+            <div data-role="panel" id="mypanel" data-theme="b" data-display="overlay" data-theme="b">
+                <a href="#" onclick="home()" data-role="button"><i class="fa fa-home"></i> Home</a>
+                <a href="#" onclick="pratos()" data-role="button"><i class="fa fa-file-text-o"></i> Pratos</a> 
+                <a href="#" onclick="maps()" data-role="button"><i class="fa fa-map"></i> Localização</a>
+                <a href="" data-role="button" data-rel="close"><i class="fa fa-times"></i> Voltar</a>
+                <a href="#" onclick="sair()" data-role="button"><i class="fa fa-sign-out"></i> Sair</a>
+            </div>
+
+        <header data-role="header"data-theme="b">
+            <h1><i class="fa fa-cutlery" ></i> PedeRango</h1>
+            <a href="#mypanel" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all"><i class="fa fa-bars"></i></a>
+        </header>
+
+
+        <main role="main" class="ui-content" >
+                <ul data-role="listview" data-inset="true" id="pedido" ></ul>                
+        </main>
+    </div>
+
+<script>
+    function carregarPedido() {
+        var endereco = 'http://localhost/pederango/webservice/pedido_listar.php'
+        var dados = {
+            codigo_usuario : localStorage.getItem('codigo_usuario')
+        }
+
+        $.ajax({
+            data : dados,
+            url : endereco,
+            type : 'GET',
+            beforeSend : function(){//executa antes de enviar o ajax
+                $.mobile.loading('show',{
+                    text : 'Aguarde...',
+                    textVisible : true,
+                    theme : 'b',
+                    textonly : false
+                }) //spinner
+            }
+        }).done(function(resposta){//executado qndo recebe a resposta do servidor
+            //converte uma string JSON em objetos
+            var pedidos = JSON.parse(resposta);
+            pedidos.map(function (pedido) {
+                //guardando o codigo do produto
+                var cod_pedido = pedido.id_pedido;
+
+                
+                    var listaPedidos ='<li><a href ="produto_listar.html">';
+                                listaPedidos += '<h2><strong>' + cod_pedido + '</strong></h2>'
+                                listaPedidos += '<p>Pedido realizado em:' + pedido.nova_data +' '+ pedido.nova_hora + '</p>'
+                                listaPedidos += '<p>Situação:' + pedido.status_pedido + '</p>'
+                            listaPedidos += '</a>';
+                        listaPedidos +='</li>';
+
+                //inserindo o produto na lista
+                $('#pedido').append(listaPedidos);
+
+                 $('#pedido').listview('refresh');
+                
+            });
+
+            $.mobile.loading('hide');
+
+        }).fail(function(erro){
+        
+        })
+
+    }
+    function pratos(){
+                window.location = 'produto_listar.html'
+            }
+
+    function sair() {
+        localStorage.clear();
+        window.location.href = 'index.html';
+    }
+
+    function home() {
+        window.location.href = 'destaques.html';
+    }
+
+    function cadastrarCategoria(){
+        window.location.href = 'categoria.html'
+    }
+
+    function maps(){
+        window.location.href = 'localizacao.html'
+    }
+
+
+     //aguarda o documento estar pronto para carregar os dados
+     $(document).ready(function(){
+        carregarPedido();
+    });
+
+</script>
+</body>
+</html>
+ 

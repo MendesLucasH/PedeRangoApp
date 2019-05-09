@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Produtos</title>
+    <!-- Jquery do CDN do Google, fazemo isso para podermos usar o Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- Jquery mobile do CDN do Google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Font Awesome do Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/vermelho.css" />
+     <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+    <script>
+        var id = localStorage.getItem('codigo_usuario');
+        if(!id){ // Se nao tem codigo_usuario
+                // Redireciona para o index
+            window.location.href = 'index.html';
+        }
+    </script>
+</head>
+<body>
+
+<div data-role="page" id="pagIndex">
+
+        <!-- Cabeçalho -->
+        
+        
+        
+            <div data-role="panel" id="mypanel" data-theme="b" data-display="overlay">
+                    <a href="#" onclick="home()" data-role="button"><i class="fa fa-home"></i> Home</a>
+                    <a href="#" onclick="pratos()" data-role="button"><i class="fa fa-file-text-o"></i> Pratos</a> 
+                    <a href="#" onclick="pedido()" data-role="button"><i class="fa fa-file-text-o"></i> Pedidos</a> 
+                    <a href="#" onclick="voltar()" data-role="button" data-rel="close"><i class="fa fa-times"></i> Voltar</a>
+                    <a href="#" onclick="sair()" data-role="button"><i class="fa fa-sign-out"></i> Sair</a>
+            </div>
+
+        <header data-role="header"data-theme="b">
+            <h1><i class="fa fa-cutlery" ></i> PedeRango</h1>
+            <a href="#mypanel" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all"><i class="fa fa-bars"></i></a>
+        </header>
+
+
+        <!-- Conteudo da Pagina -->
+        <main role="main" class="ui-content" style="padding: 0;">
+               
+           <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d470850.5740178812!2d-47.2105112!3d-22.783184!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cf2a894b9daa33%3A0x9245aa4bfe4adf71!2sRESTAURANTE+RANGO!5e0!3m2!1spt-BR!2sbr!4v1554944526982!5m2!1spt-BR!2sbr" width="400" height="590" frameborder="0" style="border:0" allowfullscreen></iframe>      
+        
+        </main>
+        <!-- Rodapé da Página -->
+        <footer>
+
+        </footer>
+            
+
+            <script>
+             function cadastrarCategoria() {
+                window.location = 'categoria.html';
+            }
+             function home() {
+                window.location = 'destaques.html'
+            }
+
+            function pedido(){
+                window.location = 'pedido.html'
+            }
+            function sair(){
+                localStorage.clear();
+                window.location.href = 'index.html'
+            }
+
+            function voltar(){
+                
+                window.location = 'produto_listar.html';
+            }
+            
+            function pratos(){
+                window.location = 'produto_listar.html'
+            }
+            </script>
+        </footer>
+    </div>

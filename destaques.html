@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Produtos</title>
+    <!-- Jquery do CDN do Google, fazemo isso para podermos usar o Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- Jquery mobile do CDN do Google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Font Awesome do Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/vermelho.css" />
+    <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+
+    <link rel="stylesheet" href="owlcarousel/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="owlcarousel/assets/owl.theme.default.min.css">
+    <script src="owlcarousel/owl.carousel.min.js"></script>
+
+
+
+    <script>
+        var id = localStorage.getItem('codigo_usuario');
+        if (!id) { // Se nao tem codigo_usuario
+            // Redireciona para o index
+            window.location.href = 'index.html';
+        }
+    </script>
+</head>
+
+<body>
+
+
+
+    <!-- Pagina Principal -->
+    <div data-role="page" id="pagIndex">
+
+        <!-- Cabeçalho -->
+
+
+
+        <div data-role="panel" id="mypanel" data-theme="b" data-display="overlay">
+            <a href="#" onclick="pedidos()" data-role="button"><i class="fa fa-file-text-o"></i> Pedidos</a>
+            <a href="#" onclick="pratos()" data-role="button"><i class="fa fa-file-text-o"></i> Pratos</a>
+            <a href="#" onclick="maps()" data-role="button"><i class="fa fa-map"></i> Localização</a>
+            <a href="" data-role="button" data-rel="close"><i class="fa fa-times"></i> Voltar</a>
+            <a href="#" onclick="sair()" data-role="button"><i class="fa fa-sign-out"></i> Sair</a>
+        </div>
+
+        <header data-role="header" data-theme="b">
+            <h1><i class="fa fa-cutlery"></i> PedeRango</h1>
+            <a href="#mypanel" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all"><i
+                    class="fa fa-bars"></i></a>
+
+        </header>
+
+
+        <!-- Conteudo da Pagina -->
+        <main role="main" class="ui-content" style="padding: 0;">
+            <div id="destaque" class="owl-carousel owl-theme">
+
+            </div>
+
+
+
+            <form id="prodLista">
+                <!-- Será preenchido com AJAX -->
+
+            </form>
+        </main>
+        <!-- Rodapé da Página -->
+        <footer data-role="footer" data-position="fixed" data-theme="b">
+
+        </footer>
+        <script>
+            function carregaPagina() {
+                var endereco = 'http://localhost/pederango/webservice/listar_destaque.php';
+                $.ajax({
+                    url: endereco,
+                    beforeSend: function () {
+                        $.mobile.loading('show', {
+                            text: 'Carregando pratos...',
+                            theme: 'b',
+                            textonly: false
+                        })
+                    }
+                }).done(function (resposta) {
+                    var destaques = JSON.parse(resposta);
+                    destaques.map(function (destaque) {
+
+                        var dstStr = '<div class="item" onclick="comprar(' + destaque.cod_produto + ')"><img src="' + destaque.imagem_url + '"></div>';
+
+                        $('#destaque').append(dstStr);
+
+                    })
+                    $('.owl-carousel').owlCarousel({
+                        loop: true,
+                        margin: 10,
+                        heigth: 60,
+                        nav: false,
+                        dots: true,
+                        autoplay: true,
+                        autoplayTimeout: 3000,
+                        autoplayHoverPause: true,
+                        responsive: {
+                            0: {
+                                items: 1
+                            },
+                            1000: {
+                                items: 3
+                            },
+                            1500: {
+                                items: 5
+                            }
+                        }
+
+                    })
+                    $('.play').on('click', function () {
+                        owl.trigger('play.owl.autoplay', [1000])
+                    })
+                    $('.stop').on('click', function () {
+                        owl.trigger('stop.owl.autoplay')
+                    })
+
+
+                }).fail(function () {
+
+                })
+
+            }
+
+            function comprar(cod_produto) {
+                var fd = new FormData();
+                fd.append('prod[' + cod_produto + ']', 1);
+                fd.append('cod_usuario', id);
+
+                var endereco = 'http://localhost/pederango/webservice/pedido_inserir.php';
+
+                $.ajax({
+                    url: endereco,
+                    type: 'post',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        $.mobile.loading('show', {
+                            text: 'Eviando pedido...',
+                            textVisible: true,
+                            theme: 'b',
+                            textonly: false
+                        })
+                    }
+                }).done(function (resposta) {
+                    if (resposta == 'sucesso') {
+                        alert('Pedido realizado com sucesso. Seu prato está sendo preparado.')
+                        $.mobile.loading('hide');
+                    }
+
+                }).fail(function (erro) {
+
+
+                });
+                
+                return false;
+            }
+
+
+            function pratos() {
+                window.location = 'produto_listar.html'
+            }
+
+
+            function cadastrarCategoria() {
+                window.location = 'categoria.html';
+            }
+
+            function maps() {
+                window.location = 'localizacao.html'
+            }
+            function pedidos() {
+                window.location = 'pedido.html'
+            }
+            function sair() {
+                localStorage.clear();
+                window.location.href = 'index.html'
+            }
+
+            carregaPagina()
+
+        </script>
+    </div>
+    </script>
+
+    <style>
+        .item {
+            width: 100%;
+            height: 100%;
+
+        }
+    </style>
+</body>
+
+</html>

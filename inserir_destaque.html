@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Destaques</title>
+
+    <!-- Jquery do CDN do Google, fazemo isso para podermos usar o Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- Jquery mobile do CDN do Google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Font Awesome do Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/vermelho.css" />
+    <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+</head>
+
+<body>
+    <div data-role="page" id="cadastrar">
+        <header data-role="header" data-theme="b">
+            <h1><i class="fa fa-cutlery"></i> PedeRango</h1>
+
+            <a href="#" onclick="sair()" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all"><i
+                    class="fa fa-chevron-left" aria-hidden="true"></i></a>
+        </header>
+        <main role="main" class="ui-content">
+            <main role="main" class="ui-content" data-theme="b">
+                <h1>Novo destaque</h1>
+                <form id="destaque" name="destaque" enctype="multipart/form-data" data-theme="b"
+                    onsubmit="return enviar()">
+
+                     <label for="username">Nome: </label>
+                    <input type="text" name="nome" id="nome" value="" data-clear-btn="true" data-theme="b">
+                    <br>
+
+                    <label for="img">Imagem:</label>
+                    <input type="file" id="imagem" name="imagem" data-theme="b" />
+
+                    <div id="visualizar"></div>
+                    <br>
+                    <select name="produto" id="produto">
+                        <option value="">Selecione um produto</option>
+                    </select>
+                    <br>
+                    <button class="fa fa-sign-out" data-theme="b">inserir</button>
+                </form>
+            </main>
+        </main>
+
+        <script>
+            function enviar() {
+                var fd = new FormData(document.forms.destaque)
+                var endereco = 'http://localhost/pederango/webservice/inserir_destaque.php';
+                $.ajax({
+                    url: endereco,
+                    type: 'post',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                }).done(function (resposta) {
+
+                    if (resposta == 'sucesso') {
+                        alert("Imagem Inserida com sucesso!");
+                        window.location.href = 'menu_principal.html';
+                    } else {
+                        alert('Erro' + resposta);
+                        $.mobile.loading('hide');
+                    }
+
+                }).fail(function (erro) {
+
+                });
+                return false;
+            }
+
+
+            $.ajax({
+                url: 'http://localhost/pederango/webservice/produto_listar.php',
+                data: {
+                    categoria: document.getElementById('produto').value
+                },
+                type: 'get', //GET pois eu estou apenas trazendo informações do servidor
+
+                beforeSend: function () { // Executa antes de enviar o ajax
+                    $.mobile.loading('show', {
+                        text: 'Carregando pratos...',
+                        textVisible: true,
+                        theme: 'b',
+                        textonly: false
+                    }) // mostra o spinner
+                }
+            }).done(function (resposta) { // Executa quando recebe a resposta do servidor
+                //Converte uma string Json em objetos
+                var produtos = JSON.parse(resposta);
+
+                produtos.map(function (produto) {
+                    var estStr = '<option value="' + produto.codigo_produto + '">' + produto.nome_prod + '</option>';
+                    $('#produto').append(estStr);
+                })
+                $.mobile.loading('hide');
+
+            }).fail(function (erro) { // Executa quando a requisição retornar um erro
+
+            })
+
+            function sair() {
+                window.location = 'menu_principal.html'
+            }
+
+        </script>
+    </div>
+</body>
+
+</html>

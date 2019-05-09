@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cadastrar</title>
+    <!-- Jquery do CDN do Google, fazemo isso para podermos usar o Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- Jquery mobile do CDN do Google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Font Awesome do Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/vermelho.css" />
+     <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+</head>
+
+<body>
+    <div data-role="page" id="cadastrar" data-theme="b">
+        <header data-role="header" data-theme="b">
+            <h1><i class="fa fa-cutlery"></i> PedeRango</h1>
+            <a href="#" onclick="sair()" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all"><i
+                    class="fa fa-chevron-left" aria-hidden="true"></i></a>
+        </header>
+
+        <main role="main" class="ui-content" >
+            <h1>Nova Categoria</h1>
+            <form id="formCadastrar" onsubmit="return cadastrar()" >
+                <ul data-role="listview" data-inset="true" >
+                    <li class="ui-field-contain" data-theme="b">
+                         <label for="categoria">Categoria</label>
+                        <input placeholder="Digite uma categoria" type="text" name="categoria" id="categoria" value="" data-clear-btn="true" data-theme="b">
+                    </li>
+                    <li class="ui-body ui-body-b" data-theme="b">
+                        <button type="submit" class="ui-btn ui-corner-all ui-btn-a"><i class="fa fa-paper-plane"
+                             aria-hidden="true"></i> Cadastrar</button>
+                    </li>
+                </ul>
+            </form>
+        </main>
+    </div>
+    <script>
+        function cadastrar() {
+             //Validando os campos para ver se estão preenchidos
+             var dados = {
+                categoria: document.forms.formCadastrar.categoria.value
+            };
+             if (dados.categoria == '') {
+                document.forms.formCadastrar.categoria.style.bordercolor = 'red';
+                document.forms.formCadastrar.categoria.focus();
+                alert('Digite sua categoria');
+                return false;
+            }
+
+            // Obentendo o Valor dos campos
+            var categoriaValor = document.getElementById('categoria').value;
+
+            var endereco = 'http://localhost/pederango/webservice/categoria_inserir.php';
+            $.ajax({
+                url: endereco,
+                data: dados,
+                type: 'POST',
+                beforeSend: function () {
+                    $.mobile.loading('show', {
+                        Text: 'Aguarde...',
+                        textVisible: true,
+                        theme: 'b',
+                        textonly: false
+                    });
+                }
+
+            }).done(function (resposta) {
+                //CONVERTE A RESPOSTA DO SERVIDOR EM OBJETOS JAVASCRIPT
+              if(resposta == 'sucesso'){
+                  alert('Categoria cadastrada com sucesso');
+                  document.forms.formCadastrar.reset();
+              }else{
+                  alert(resposta)
+              }
+              $.mobile.loading('hide');
+
+               
+
+            }).fail(function (erro) {
+
+            });
+            return false;
+        }
+        function sair() {
+                window.location.href = 'menu_principal.html';
+            }
+           
+            
+    </script>
+</body>
+
+</html>

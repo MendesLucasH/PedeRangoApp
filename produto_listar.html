@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Produtos</title>
+    <!-- Jquery do CDN do Google, fazemo isso para podermos usar o Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- Jquery mobile do CDN do Google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Font Awesome do Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    
+
+    <link rel="stylesheet" href="css/vermelho.css" />
+     <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+    <script>
+        var id = localStorage.getItem('codigo_usuario');
+        if(!id){ // Se nao tem codigo_usuario
+                // Redireciona para o index
+            window.location.href = 'index.html';
+        }
+    </script>
+</head>
+<body>
+     
+  
+
+    <!-- Pagina Principal -->
+    <div data-role="page" id="pagIndex">
+
+        <!-- Cabeçalho -->
+        
+        
+        
+            <div data-role="panel" id="mypanel" data-theme="b" data-display="overlay">
+                <a href="#" onclick="home()" data-role="button"><i class="fa fa-home"></i> Home</a>
+                <a href="#" onclick="pedidos()" data-role="button"><i class="fa fa-file-text-o"></i> Pedidos</a> 
+                <a href="#" onclick="maps()" data-role="button"><i class="fa fa-map"></i> Localização</a>  
+                <a href="" data-role="button" data-rel="close"><i class="fa fa-times"></i> Voltar</a>
+                <a href="#" onclick="sair()" data-role="button"><i class="fa fa-sign-out"></i> Sair</a>
+            </div>
+
+        <header data-role="header"data-theme="b">
+            <h1><i class="fa fa-cutlery" ></i> PedeRango</h1>
+            <a href="#mypanel" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all"><i class="fa fa-bars"></i></a>
+            
+        </header>
+
+
+        <!-- Conteudo da Pagina -->
+        <main role="main" class="ui-content" style="padding: 0;">
+                <select onchange="carregaPagina()"name="categoria" id="categoria"  data-theme="b">
+                    <option value="0">Todos</option>
+                </select>
+            <form id="prodLista">
+                <!-- Será preenchido com AJAX -->
+                
+            </form>
+        </main>
+        <!-- Rodapé da Página -->
+        <footer data-role="footer" data-position ="fixed" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a onclick="enviar()" href="#"><i class="fa fa-motorcycle" aria-hidden="true" ></i> Pedir</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+  
+
+    <script>
+        //Criando função para solicitar todos os produtos
+        function carregaPagina(){
+            var endereco= 'http://localhost/pederango/webservice/produto_listar.php'
+
+            //Chamando o metodo AJAX
+            $.ajax({
+                url : endereco,
+                data : {
+                    categoria : document.getElementById('categoria').value
+                },
+                type : 'get', //GET pois eu estou apenas trazendo informações do servidor
+
+                beforeSend : function (){ // Executa antes de enviar o ajax
+                    $.mobile.loading('show',{
+                        text: 'Carregando pratos...',
+                        textVisible : true,
+                        theme : 'b',
+                        textonly : false
+                    }) // mostra o spinner
+                }
+            }).done(function (resposta){ // Executa quando recebe a resposta do servidor
+            //Converte uma string Json em objetos
+            var produtos = JSON.parse(resposta);
+            $('#prodLista').html('');
+            produtos.map(function (produto, indice){
+                var pid = produto.codigo_produto;
+                var prodStr = '<ul data-role = "listview" data-inset="true" data-icon="false" data-theme="b">';
+                        prodStr+= '<li>';
+                            prodStr+= '<a href="#">';
+                                prodStr+= '<img src="' + produto.imagem_url + '">';
+                                prodStr+= '<h1>' + produto.nome_prod + '</h1>' 
+                                prodStr+= '<p>' + produto.resumo_prod +'</p>'
+                                prodStr+= '<p class ="ui-li-aside">' + produto.valor_formatado + '</p>'
+                                
+                            prodStr+= '</a>';
+                        prodStr+= '</li>';
+                        prodStr+= '<li>'
+                                prodStr+= '<label> Selecione a quantidade </label>'
+                                prodStr+= '<fieldset class = "ui-grid-b">' //Uma Grid de 3 Colunas
+                                   prodStr+='<div class="ui-block-a"><button onclick="return diminuir('+indice+')" data-mini="true"><i class="fa fa-minus"></i></buttom></div>'
+                                   prodStr+='<div class="ui-block-b"><input name="prod['+produto.codigo_produto+']" style="text-align: center;" value="0" type="text" id="qtd_' +indice+ '" data-mini="true"></div>'
+                                   prodStr+='<div class="ui-block-c"><button onclick="return aumentar('+indice+')" data-mini="true"><i class="fa fa-plus"></i></button></div>'
+                                prodStr+= '</fieldset>'
+                        prodStr+='</li>'
+                    prodStr += '</ul>';
+                
+                // Inserindo Produto na Pagina
+                $('#prodLista').append(prodStr);
+
+                $('#prodLista').trigger('create');
+            });
+            $.mobile.loading('hide');
+
+            }).fail(function (erro){ // Executa quando a requisição retornar um erro
+
+            })
+        }
+        function enviar() {
+            var form= document.getElementById('prodLista');
+
+            var f_data= new FormData(form);
+            
+            var dados = {};
+            f_data.forEach(function (valor, chave){
+               dados[chave] = valor;
+            })
+           dados.cod_usuario = id;
+
+           var endereco = 'http://localhost/pederango/webservice/pedido_inserir.php';
+
+           $.ajax({
+            url: endereco,
+            type:'post',
+            data: dados,
+            beforeSend: function(){
+                $.mobile.loading('show',{
+                        text: 'Eviando pedido...',
+                        textVisible: true,
+                        theme: 'b',
+                        textonly: false
+                })
+            }
+           }).done(function(resposta){
+               if(resposta == 'sucesso'){
+                   alert('Pedido realizado com sucesso. Seu prato está sendo preparado.')
+                    $.mobile.loading('hide');
+               }
+
+           }).fail(function (erro){
+
+
+           });
+            console.log(dados);
+            return false;
+        }
+        function aumentar(indice){
+            document.getElementById('qtd_' +indice).value ++
+            return false;
+        }
+        function diminuir(indice){
+            if( document.getElementById('qtd_' +indice).value >0){
+            document.getElementById('qtd_' +indice).value --
+
+            }else{
+
+            }
+            return false; 
+        }
+        function sair(){
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+        //Aguarda o documento estar
+        //para carregar os dados
+        $(document).ready(function() {
+            carregaPagina();
+        })
+
+            function carregaCategoria(){
+                var endereco = 'http://localhost/pederango/webservice/categoria.php';
+                $.ajax({
+                    url: endereco,
+                    beforeSend: function(){
+                        $.mobile.loading('show',{
+                        Text: 'Aguarde...',
+                        textVisible: true,
+                        theme: 'b',
+                        textonly: false
+                });
+                    }
+            
+                }).done(function (resposta){
+                    var categorias = JSON.parse(resposta);
+                    //Percorre a lista de estados
+                    categorias.map(function (categoria){
+                        var estStr = '<option value="'+ categoria.cod_categoria +'">'+ categoria.nome_cat +'</option>';
+                        $('#categoria').append(estStr);
+                    });
+                    
+                }).fail(function (erro){
+
+                });
+
+            }
+            carregaCategoria(); 
+
+            function cadastrarCategoria() {
+                window.location = 'categoria.html';
+            }
+
+            function home() {
+                window.location = 'destaques.html'
+            }
+            function maps() {
+                window.location = 'localizacao.html'
+            }
+            function pedidos() {
+                window.location = 'pedido.html'
+            }
+            
+    </script>
+</body>
+</html>

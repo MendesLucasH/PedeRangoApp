@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PedeRagno.com</title>
+
+    <!-- Jquery do CDN do Google, fazemo isso para podermos usar o Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- Jquery mobile do CDN do Google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Font Awesome do Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+   
+    <link rel="stylesheet" href="css/vermelho.css" />
+     <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+    <style>
+        
+        #logo{
+            margin-top: 5%;
+            text-align: center;
+        }
+        #logo img{
+            width: 53%;
+            height:auto;
+            max-width:100%;
+            max-height:100%;
+            margin: auto;
+        }
+    </style>
+    
+    <script>
+        //Obtem o id do usuario da sessao
+        var id = localStorage.getItem('codigo_usuario');
+
+        if(id){//Se ja existe codigo_usuario na sessao
+                // Redireciona para pagina de produtos
+            window.location.href = 'produto_listar.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Pagina Principal -->
+    <div data-role= "page" id="login" data-theme="b">
+
+        <!-- Conteudo da Pagina -->
+        <main role="main" class="ui-content">
+            <!-- Logo do App -->
+            <div id="logo">
+                <img src="img/logo-2.png" alt="logo">
+            </div>
+            <h1>Por favor Entre:</h1>
+
+            <!-- Formulario de Login -->
+            <form id="formLogin" onsubmit="return entrar()"  data-theme="b">
+                <ul data-role="listview" data-inset="true">
+
+                    <!-- Campo de username -->
+                    <li class="ui-field-contain"  data-theme="b">
+                        <label for="campoUsername">Usuário</label>
+                        <input type="text" id="campoUsername" placeholder="Digite seu usuário"  data-theme="b">
+                    </li>
+
+                    <!-- Campo de Senha -->
+                    <li class="ui-field-contain"  data-theme="b">
+                        <label for="campoSenha"  data-theme="b">Senha</label>
+                        <input type="password" id="campoSenha" placeholder="Digite sua Senha"  data-theme="b">
+                    </li>
+
+                    <!-- Botao Entrar -->
+                    <li class="ui-field-contain"  data-theme="b">
+                        <button>Entrar</button>
+                    </li>
+                </ul>
+            </form>
+            <div style="text-align: center">
+                <a data-ajax="false" href="cadastrar.html">Não sou cadastrado</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function entrar(){
+            // Obentendo o Valor do campo username.
+            var usernameValor = document.getElementById('campoUsername').value;
+
+            // Obento o Valor do campo Senha.
+            var senhaValor = document.forms.formLogin.campoSenha.value;
+
+            //Declarando o endereco para onde enviar os dados
+            var endereco = 'http://localhost/pederango/webservice/login.php';
+
+            //Montando o objeto com os dados
+            var dados = {
+                username : usernameValor,
+                senha    : senhaValor,
+            };
+            $.ajax({
+                url: endereco,
+                type : 'post',
+                data: dados,
+                beforeSend : function () {
+                    //Mostra o spinner
+                    $.mobile.loading(
+                        'show',{
+                            text : 'Carregando...',
+                            textVisible: true,
+                            theme : 'b',
+                            textOnly: false
+                        }   
+                    );
+                }
+            }).done(function(resposta){
+                //converte uma string
+                //JSON em um objeto
+                var user = JSON.parse(resposta);
+
+                if(user){//Se tem usuario
+                    localStorage.setItem('codigo_usuario', user.codigo_usuario);
+                    localStorage.setItem('nome_completo', user.nome_completo);
+                    localStorage.setItem('username', user.username);
+                    localStorage.setItem('tipo', user.tipo);
+                    localStorage.setItem('estado_cod', user.estado_cod);
+                    localStorage.setItem('cidade_cod', user.cidade_cod);
+                    localStorage.setItem('endereco', user.endereco);
+                
+                if(user.tipo == 'adm') {
+                    window.location = 'menu_principal.html'
+                }else{
+                    window.location.href = 'destaques.html';
+                }
+                 //
+
+
+                    //TODO: enviar para outra pagina
+                }else{
+                    alert('Usuario ou Senha inválidos');
+                    //limpa o form
+                    document.forms.formLogin.reset();
+                    document.forms.formLogin.campoUsername.focus();
+                    $.mobile.loading('hide'); //Esconder o spinner 
+                    return false;
+                }
+            
+            }).fail(function (erro){
+
+            })
+            return false;
+        }
+    </script>
+</body>
+</html>

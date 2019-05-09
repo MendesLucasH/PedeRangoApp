@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CARROSEL</title>
+</head>
+<body>
+    <h1>Upload</h1>
+    <form onsubmit="return enviar()" id="formUp" enctype="multipart/form-data">
+        Nome: <input type="text" nome="nome">
+        Imagem: <input type="file" name="imagem">
+        <button>Enviar</button>
+    </form>
+    <script>
+        function enviar() {
+            var fd = new formData(document.forms.formUp);
+           var endereco ='http://localhost/pederango/webservice/upload.php';
+           $.ajax({
+               url : endereco,
+               type : 'POST',
+               dados: fd,
+               processData: false,
+               contentType: false,
+           }).done(function(resposta){
+
+           }).fail(function(erro){
+
+           });
+            return false;
+        }
+    </script>
+</body>
+</html>

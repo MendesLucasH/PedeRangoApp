@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Produtos</title>
+    <!-- Jquery do CDN do Google, fazemo isso para podermos usar o Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- Jquery mobile do CDN do Google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Font Awesome do Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    
+
+    <link rel="stylesheet" href="owlcarousel/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="owlcarousel/assets/owl.theme.default.min.css">
+    <script src="owlcarousel/owl.carousel.min.js"></script>
+
+    
+
+    <script>
+        var id = localStorage.getItem('codigo_usuario');
+        if (!id) { // Se nao tem codigo_usuario
+            // Redireciona para o index
+            window.location.href = 'index.html';
+        }
+    </script>
+</head>
+
+<body>
+
+
+
+    <!-- Pagina Principal -->
+    <div data-role="page" id="pagIndex">
+
+        <!-- Cabeçalho -->
+
+
+
+        <div data-role="panel" id="mypanel" data-theme="b" data-display="overlay">
+            <a href="#" onclick="home()" data-role="button"><i class="fa fa-home"></i> Home</a>
+            <a href="#" onclick="promocao()" data-role="button"><i class="fa fa-file-text-o"></i> Promoções</a>
+            <a href="#" onclick="cadastrarCategoria()" data-role="button"><i class="fa fa-plus"></i> Cadastrar Categoria</a>
+            <a href="#" onclick="maps()" data-role="button"><i class="fa fa-map"></i> Localização</a>
+            <a href="#" onclick="sair()" data-role="button"><i class="fa fa-sign-out"></i> Sair</a>
+            <a href="" data-role="button" data-rel="close"><i class="fa fa-times"></i> Voltar</a>
+        </div>
+
+        <header data-role="header" data-theme="b">
+            <h1><i class="fa fa-cutlery"></i> PedeRango.com</h1>
+            <a href="#mypanel" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all fa fa-bars"></a>
+
+        </header>
+
+
+        <!-- Conteudo da Pagina -->
+        <main role="main" class="ui-content" style="padding: 0;">
+            <div id="" class="owl-carousel owl-theme">
+
+            </div>
+
+
+            <form id="prodLista">
+                <!-- Será preenchido com AJAX -->
+
+            </form>
+        </main>
+        <!-- Rodapé da Página -->
+        <footer data-role="footer" data-position="fixed" data-theme="b">
+
+        </footer>
+        <script>
+            $('.owl-carousel').owlCarousel({
+                loop: true,
+                margin: 10,
+                nav: false,
+                dots: false,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 3
+                    },
+                    1000: {
+                        items: 5
+                    }
+                }
+
+            })
+            function cadastrarCategoria() {
+                window.location = 'categoria.html';
+            }
+
+            function home() {
+                window.location = 'produto_listar.html'
+            }
+
+            function promocao() {
+                window.location = 'promocao.html'
+            }
+
+        </script>
+    </div>
+    </script>
+</body>
+
+</html>

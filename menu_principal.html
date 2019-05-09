@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Produtos</title>
+    <!-- Jquery do CDN do Google, fazemo isso para podermos usar o Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- Jquery mobile do CDN do Google -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Font Awesome do Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script>
+        var id = localStorage.getItem('codigo_usuario');
+        if(!id){ // Se nao tem codigo_usuario
+                // Redireciona para o index
+            window.location.href = 'index.html';
+        }
+    </script>
+</head>
+<body>
+     
+  
+
+    <!-- Pagina Principal -->
+    <div data-role="page" id="pagIndex">
+
+        <!-- Cabeçalho -->
+          
+        <header data-role="header"data-theme="b" data-position="true">
+            <h1><i class="fa fa-cutlery" ></i> PedeRango</h1>
+            <a href="#" onclick="sair()"  class="ui-btn-right ui-btn-b ui-btn-inline ui-mini ui-corner-all fa fa-sign-out"></a>
+            
+        </header>
+
+
+        <!-- Conteudo da Pagina -->
+        <main role="main" class="ui-content" style="padding: 0;">
+              <ul data-role="listview" data-inset="true" class="ui-alt-icon">
+                  <li data-icon="plus" class="ui-field-contain" data-icon="false">
+                  <a href="categoria.html" data-icon="plus" data-ajax="false">
+                      <h2>Cadastrar Categoria</h2>
+                      
+                  </a>
+                </li>
+                <br>
+                <li data-icon="plus" class="ui-field-contain" data-icon="false">
+                    <a href="excluircategoria.html" data-icon="plus" data-ajax="false">
+                        <h2>Excluir Categoria</h2>
+                        
+                    </a>
+                  </li>
+                  <br>
+                  <li data-icon="plus" class="ui-field-contain" data-icon="false">
+                        <a href="inserir_destaque.html" data-icon="plus" data-ajax="false">
+                            <h2>Inserir Destaque</h2>
+                            
+                        </a>
+                      </li>
+              </ul>  
+        
+        </main>
+        <!-- Rodapé da Página -->
+        <footer data-role="footer" data-position ="fixed" data-theme="b">
+            <div data-role="navbar">
+               
+            </div>
+        </footer>
+    </div>
+
+    <script>
+    function sair() {
+        localStorage.clear();
+        window.location.href = 'index.html'
+    }
+    </script>
+
+  
+</body>
+</html>
